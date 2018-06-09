@@ -39,7 +39,6 @@ public class GameOfLife {
         String[][] resultMatrix = new String[size][size];
         cleanMatrix(resultMatrix);
 
-
         for (int i = 0; i < matrixA.length; i++) {
             for (int j = 0; j < matrixA[0].length; j++) {
                 int aliveCellCount = getAroundAliveCount(i, j);
@@ -50,12 +49,29 @@ public class GameOfLife {
                     resultMatrix[i][j] = matrixA[i][j];
                 } else if (aliveCellCount == 3) {
                     resultMatrix[i][j] = "*";
-                }else{
+                } else {
                     resultMatrix[i][j] = " ";
                 }
             }
         }
+        this.matrixA = resultMatrix;
         return resultMatrix;
+    }
+
+    public void output(double time) throws InterruptedException {
+        String line = "-----------------------------------";
+        while (true) {
+            System.out.println(line);
+            for (int i = 0; i < size; i++) {
+                System.out.print("|");
+                for (int j = 0; j < size; j++) {
+                    System.out.print(matrixA[i][j] + "|");
+                }
+                System.out.println();
+            }
+            updateMatrix();
+            Thread.sleep((long) time * 1000);
+        }
     }
 
     private int getAroundAliveCount(int i, int j) {
@@ -101,4 +117,5 @@ public class GameOfLife {
             }
         }
     }
+
 }

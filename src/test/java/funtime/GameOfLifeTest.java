@@ -112,6 +112,16 @@ public class GameOfLifeTest {
         assertTrue(cellCountNew == 4);
     }
 
+    @Test
+    public void shouldOutputMatrix() throws InterruptedException {
+        // Given
+        int cellCount = 27;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, 6);
+
+        // Then
+        gameOfLife.output(1.5);
+    }
+
     private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
@@ -123,6 +133,4 @@ public class GameOfLifeTest {
         }
         return count;
     }
-
-
 }
