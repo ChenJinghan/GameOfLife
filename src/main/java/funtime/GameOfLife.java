@@ -2,8 +2,7 @@ package funtime;
 
 import javafx.util.Pair;
 
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 public class GameOfLife {
     private Random random = new Random();
@@ -129,4 +128,54 @@ public class GameOfLife {
         }
     }
 
+    private static boolean isInputValid(List<Integer> list, int size) {
+        if (list.size() / 2 > size * size) {
+            System.out.println("输入坐标个数超出矩阵范围");
+            return false;
+        }
+        if (list.size() % 2 != 0) {
+            System.out.println("输入坐标个数错误");
+            return false;
+        }
+        for (int m : list) {
+            if (m >= size) {
+                System.out.println("输入值大小超出矩阵范围");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+
+        ArrayList<Integer> list = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("请输迭代速度（秒）：");
+        double speed = scanner.nextDouble();
+
+        System.out.println("请输入矩阵长度：");
+        int size = scanner.nextInt();
+
+        System.out.println("请输入细胞坐标，输入任意字母结束：");
+        while (scanner.hasNextInt()) {
+            int m = scanner.nextInt();
+            list.add(m);
+        }
+
+        if (!isInputValid(list, size))
+            return;
+
+        int i = 0;
+        HashSet<Pair<Integer, Integer>> hashSet = new HashSet<>();
+        while (i < list.size()) {
+            Pair<Integer, Integer> pair = new Pair<>(list.get(i), list.get(i + 1));
+            hashSet.add(pair);
+            i += 2;
+        }
+
+        GameOfLife gameOfLife = new GameOfLife(hashSet, size);
+        gameOfLife.output(speed);
+
+    }
 }
