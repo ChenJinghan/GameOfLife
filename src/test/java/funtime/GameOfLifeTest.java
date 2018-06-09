@@ -5,11 +5,11 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import static funtime.Constants.ALIVE_PATTERN;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GameOfLifeTest {
-
     static final int SIZE = 100;
 
     @Test
@@ -63,10 +63,10 @@ public class GameOfLifeTest {
         // When
         boolean flag = true;
         String[][] matrix = gameOfLife.getMatrix();
-        String[][] matrix_2 = gameOfLife2.getMatrix();
+        String[][] matrix2 = gameOfLife2.getMatrix();
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                if (!matrix[i][j].equals(matrix_2[i][j])) flag = false;
+                if (!matrix[i][j].equals(matrix2[i][j])) flag = false;
             }
         }
 
@@ -130,21 +130,11 @@ public class GameOfLifeTest {
         assertTrue(cellCountNew == 4);
     }
 
-    @Test
-    public void shouldOutputMatrix() throws InterruptedException {
-        // Given
-        int cellCount = 27;
-        GameOfLife gameOfLife = new GameOfLife(cellCount, 6);
-
-        // Then
-        gameOfLife.output(1.5);
-    }
-
     private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j].equals("*")) {
+                if (matrix[i][j].equals(ALIVE_PATTERN)) {
                     count++;
                 }
             }

@@ -4,59 +4,52 @@ import javafx.util.Pair;
 
 import java.util.*;
 
+import static funtime.Constants.*;
+
 public class GameOfLife {
-    private Random random = new Random();
+    private static Random random = new Random();
     private int size;
-    private String[][] matrixA;
+    private String[][] matrix;
 
     public GameOfLife(int size) {
         this.size = size;
-        matrixA = new String[size][size];
+        matrix = new String[size][size];
     }
 
     public GameOfLife(int cellCount, int size) {
         this.size = size;
-        matrixA = new String[size][size];
-        int maxCells = matrixA.length * matrixA[0].length;
+        matrix = new String[size][size];
+        int maxCells = matrix.length * matrix[0].length;
         if (cellCount > maxCells)
             cellCount = maxCells;
         HashSet<Pair<Integer, Integer>> posSet = generateRandomCells(cellCount);
-        cleanMatrix(matrixA);
+        cleanMatrix(matrix);
 
         setAlivePosition(posSet);
     }
 
     public GameOfLife(HashSet<Pair<Integer, Integer>> aliveCellsPositions, int size) {
         this.size = size;
-        matrixA = new String[size][size];
-        cleanMatrix(matrixA);
+        matrix = new String[size][size];
+        cleanMatrix(matrix);
         setAlivePosition(aliveCellsPositions);
     }
 
     public String[][] getMatrix() {
-        return matrixA;
+        return matrix;
     }
 
     public String[][] updateMatrix() {
         String[][] resultMatrix = new String[size][size];
         cleanMatrix(resultMatrix);
 
-        for (int i = 0; i < matrixA.length; i++) {
-            for (int j = 0; j < matrixA[0].length; j++) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
                 int aliveCellCount = getAroundAliveCount(i, j);
-
-                if (aliveCellCount < 2) {
-                    resultMatrix[i][j] = " ";
-                } else if (aliveCellCount == 2) {
-                    resultMatrix[i][j] = matrixA[i][j];
-                } else if (aliveCellCount == 3) {
-                    resultMatrix[i][j] = "*";
-                } else {
-                    resultMatrix[i][j] = " ";
-                }
+                setMatrixBasedOnRules(resultMatrix, i, j, aliveCellCount);
             }
         }
-        this.matrixA = resultMatrix;
+        this.matrix = resultMatrix;
         return resultMatrix;
     }
 
@@ -67,12 +60,24 @@ public class GameOfLife {
             for (int i = 0; i < size; i++) {
                 System.out.print("|");
                 for (int j = 0; j < size; j++) {
-                    System.out.print(matrixA[i][j] + "|");
+                    System.out.print(matrix[i][j] + "|");
                 }
                 System.out.println();
             }
             updateMatrix();
-            Thread.sleep((long) time * 1000);
+            Thread.sleep((long) time * MILLIS_PER_SECOND);
+        }
+    }
+
+    private void setMatrixBasedOnRules(String[][] resultMatrix, int i, int j, int aliveCellCount) {
+        if (aliveCellCount < 2) {
+            resultMatrix[i][j] = DEAD_PATTERN;
+        } else if (aliveCellCount == 2) {
+            resultMatrix[i][j] = matrix[i][j];
+        } else if (aliveCellCount == 3) {
+            resultMatrix[i][j] = ALIVE_PATTERN;
+        } else {
+            resultMatrix[i][j] = DEAD_PATTERN;
         }
     }
 
@@ -80,7 +85,7 @@ public class GameOfLife {
         for (Pair position : posSet) {
             int row = (int) position.getKey();
             int column = (int) position.getValue();
-            matrixA[row][column] = "*";
+            matrix[row][column] = ALIVE_PATTERN;
         }
     }
 
@@ -93,7 +98,7 @@ public class GameOfLife {
                 int jNew = j + jOffSet;
 
                 if (isIndexValid(iNew, jNew)) {
-                    if (matrixA[iNew][jNew].equals("*")) {
+                    if (matrix[iNew][jNew].equals(ALIVE_PATTERN)) {
                         aliveCellCount++;
                     }
                 }
@@ -103,7 +108,7 @@ public class GameOfLife {
     }
 
     private boolean isIndexValid(int iNew, int jNew) {
-        return iNew >= 0 && iNew < matrixA.length && jNew >= 0 && jNew < matrixA[0].length;
+        return iNew >= 0 && iNew < matrix.length && jNew >= 0 && jNew < matrix[0].length;
     }
 
     private HashSet<Pair<Integer, Integer>> generateRandomCells(int cellCount) {
@@ -120,25 +125,21 @@ public class GameOfLife {
         return posSet;
     }
 
-    private void cleanMatrix(String[][] matrixA) {
+    private void cleanMatrix(String[][] matrix) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                matrixA[i][j] = " ";
+                matrix[i][j] = DEAD_PATTERN;
             }
         }
     }
 
     private static boolean isInputValid(List<Integer> list, int size) {
-        if (list.size() / 2 > size * size) {
-            System.out.println("输入坐标个数超出矩阵范围");
-            return false;
-        }
         if (list.size() % 2 != 0) {
             System.out.println("输入坐标个数错误");
             return false;
         }
-        for (int m : list) {
-            if (m >= size) {
+        for (int coordinate : list) {
+            if (coordinate >= size) {
                 System.out.println("输入值大小超出矩阵范围");
                 return false;
             }
@@ -146,8 +147,39 @@ public class GameOfLife {
         return true;
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    private static GameOfLife generateGameOfLife(ArrayList<Integer> list, Scanner scanner, int size, int choice) {
+        GameOfLife gameOfLife;
+        if (choice == RANDOM) {
+            int cellCount = random.nextInt(size);
+            gameOfLife = new GameOfLife(cellCount, size);
+        } else {
+            System.out.println("请输入细胞坐标，输入任意字母结束：");
+            while (scanner.hasNextInt()) {
+                int coordinate = scanner.nextInt();
+                list.add(coordinate);
+            }
 
+            if (!isInputValid(list, size))
+                return null;
+
+            HashSet<Pair<Integer, Integer>> hashSet = buildAliveCellPositionSet(list);
+            gameOfLife = new GameOfLife(hashSet, size);
+        }
+        return gameOfLife;
+    }
+
+    private static HashSet<Pair<Integer, Integer>> buildAliveCellPositionSet(ArrayList<Integer> list) {
+        int i = 0;
+        HashSet<Pair<Integer, Integer>> hashSet = new HashSet<>();
+        while (i < list.size()) {
+            Pair<Integer, Integer> pair = new Pair<>(list.get(i), list.get(i + 1));
+            hashSet.add(pair);
+            i += 2;
+        }
+        return hashSet;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         ArrayList<Integer> list = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
 
@@ -157,25 +189,14 @@ public class GameOfLife {
         System.out.println("请输入矩阵长度：");
         int size = scanner.nextInt();
 
-        System.out.println("请输入细胞坐标，输入任意字母结束：");
-        while (scanner.hasNextInt()) {
-            int m = scanner.nextInt();
-            list.add(m);
-        }
+        System.out.println("请选择细胞坐标初始化方式：（0）随机，（1）自定义");
+        int choice = scanner.nextInt();
 
-        if (!isInputValid(list, size))
-            return;
+        GameOfLife gameOfLife;
+        gameOfLife = generateGameOfLife(list, scanner, size, choice);
 
-        int i = 0;
-        HashSet<Pair<Integer, Integer>> hashSet = new HashSet<>();
-        while (i < list.size()) {
-            Pair<Integer, Integer> pair = new Pair<>(list.get(i), list.get(i + 1));
-            hashSet.add(pair);
-            i += 2;
-        }
+        if (gameOfLife == null) return;
 
-        GameOfLife gameOfLife = new GameOfLife(hashSet, size);
         gameOfLife.output(speed);
-
     }
 }
