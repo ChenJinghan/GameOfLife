@@ -22,8 +22,9 @@ public class GameOfLife {
     public GameOfLife(int cellCount, int size) {
         this.size = size;
         matrixA = new String[size][size];
-        if (cellCount > matrixA.length)
-            cellCount = matrixA.length;
+        int maxCells = matrixA.length * matrixA[0].length;
+        if (cellCount > maxCells)
+            cellCount = maxCells;
         HashSet<Pair<Integer, Integer>> posSet = generateRandomCells(cellCount);
         cleanMatrix(matrixA);
 
@@ -44,16 +45,21 @@ public class GameOfLife {
 
                 if (aliveCellCount < 2) {
                     resultMatrix[i][j] = " ";
+                } else if (aliveCellCount == 2) {
+                    resultMatrix[i][j] = matrixA[i][j];
+                } else if (aliveCellCount == 3) {
+                    resultMatrix[i][j] = "*";
                 }
             }
         }
-        return new String[0][];
+        return resultMatrix;
     }
 
     private int getAroundAliveCount(int i, int j) {
         int aliveCellCount = 0;
         for (int iOffSet = -1; iOffSet <= 1; iOffSet++) {
             for (int jOffSet = -1; jOffSet <= 1; jOffSet++) {
+                if (iOffSet == 0 && jOffSet == 0) continue;
                 int iNew = i + iOffSet;
                 int jNew = j + jOffSet;
 

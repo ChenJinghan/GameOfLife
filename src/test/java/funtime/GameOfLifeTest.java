@@ -84,6 +84,20 @@ public class GameOfLifeTest {
         assertTrue(cellCountNew == 0);
     }
 
+    @Test
+    public void shouldEqualsThreeAlive() {
+        // Given
+        int cellCount = 3;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, 2);
+
+        // When
+        String[][] matrixNew = gameOfLife.updateMatrix();
+        int cellCountNew = checkCellCount(matrixNew);
+
+        // Then
+        assertTrue(cellCountNew == 4);
+    }
+
     private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
