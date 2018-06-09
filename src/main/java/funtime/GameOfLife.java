@@ -15,10 +15,6 @@ public class GameOfLife {
         matrixA = new String[size][size];
     }
 
-    public String[][] getMatrix() {
-        return matrixA;
-    }
-
     public GameOfLife(int cellCount, int size) {
         this.size = size;
         matrixA = new String[size][size];
@@ -28,11 +24,18 @@ public class GameOfLife {
         HashSet<Pair<Integer, Integer>> posSet = generateRandomCells(cellCount);
         cleanMatrix(matrixA);
 
-        for (Pair position : posSet) {
-            int row = (int) position.getKey();
-            int column = (int) position.getValue();
-            matrixA[row][column] = "*";
-        }
+        setAlivePosition(posSet);
+    }
+
+    public GameOfLife(HashSet<Pair<Integer, Integer>> aliveCellsPositions, int size) {
+        this.size = size;
+        matrixA = new String[size][size];
+        cleanMatrix(matrixA);
+        setAlivePosition(aliveCellsPositions);
+    }
+
+    public String[][] getMatrix() {
+        return matrixA;
     }
 
     public String[][] updateMatrix() {
@@ -71,6 +74,14 @@ public class GameOfLife {
             }
             updateMatrix();
             Thread.sleep((long) time * 1000);
+        }
+    }
+
+    private void setAlivePosition(HashSet<Pair<Integer, Integer>> posSet) {
+        for (Pair position : posSet) {
+            int row = (int) position.getKey();
+            int column = (int) position.getValue();
+            matrixA[row][column] = "*";
         }
     }
 

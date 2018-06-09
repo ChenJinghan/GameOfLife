@@ -1,6 +1,9 @@
 package funtime;
 
+import javafx.util.Pair;
 import org.junit.Test;
+
+import java.util.HashSet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -19,6 +22,21 @@ public class GameOfLifeTest {
 
         // Then
         assertTrue(matrix != null);
+    }
+
+    @Test
+    public void shouldGetMatrixByInput() {
+        // Given
+        HashSet<Pair<Integer, Integer>> positionSet = new HashSet<>();
+        positionSet.add(new Pair<>(1, 1));
+        positionSet.add(new Pair<>(0, 1));
+        GameOfLife gameOfLife = new GameOfLife(positionSet, SIZE);
+
+        // When
+        String[][] matrix = gameOfLife.getMatrix();
+
+        // Then
+        assertTrue(checkCellCount(matrix) == 2);
     }
 
     @Test
