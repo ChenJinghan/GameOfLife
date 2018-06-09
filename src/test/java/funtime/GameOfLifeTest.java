@@ -6,14 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 public class GameOfLifeTest {
     @Test
-    public void shouldSayHello() {
-        // given
+    public void shouldGetMatrix() {
+        // Given
         GameOfLife gameOfLife = new GameOfLife();
 
-        // when
-        String string = gameOfLife.sayHello();
+        // When
+        String [][] matrix = gameOfLife.getMatrix();
 
-        // then
-        assertTrue("Hello World".equals(string));
+        // Then
+        assertTrue(matrix != null);
     }
 }
