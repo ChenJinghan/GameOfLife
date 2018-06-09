@@ -25,13 +25,50 @@ public class GameOfLife {
         if (cellCount > matrixA.length)
             cellCount = matrixA.length;
         HashSet<Pair<Integer, Integer>> posSet = generateRandomCells(cellCount);
-        cleanMatrix();
+        cleanMatrix(matrixA);
 
         for (Pair position : posSet) {
             int row = (int) position.getKey();
             int column = (int) position.getValue();
             matrixA[row][column] = "*";
         }
+    }
+
+    public String[][] updateMatrix() {
+        String[][] resultMatrix = new String[size][size];
+        cleanMatrix(resultMatrix);
+
+        for (int i = 0; i < matrixA.length; i++) {
+            for (int j = 0; j < matrixA[0].length; j++) {
+                int aliveCellCount = getAroundAliveCount(i, j);
+
+                if (aliveCellCount < 2) {
+                    resultMatrix[i][j] = " ";
+                }
+            }
+        }
+        return new String[0][];
+    }
+
+    private int getAroundAliveCount(int i, int j) {
+        int aliveCellCount = 0;
+        for (int iOffSet = -1; iOffSet <= 1; iOffSet++) {
+            for (int jOffSet = -1; jOffSet <= 1; jOffSet++) {
+                int iNew = i + iOffSet;
+                int jNew = j + jOffSet;
+
+                if (isIndexValid(iNew, jNew)) {
+                    if (matrixA[iNew][jNew].equals("*")) {
+                        aliveCellCount++;
+                    }
+                }
+            }
+        }
+        return aliveCellCount;
+    }
+
+    private boolean isIndexValid(int iNew, int jNew) {
+        return iNew >= 0 && iNew < matrixA.length && jNew >= 0 && jNew < matrixA[0].length;
     }
 
     private HashSet<Pair<Integer, Integer>> generateRandomCells(int cellCount) {
@@ -48,10 +85,9 @@ public class GameOfLife {
         return posSet;
     }
 
-    private void cleanMatrix() {
+    private void cleanMatrix(String[][] matrixA) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-
                 matrixA[i][j] = " ";
             }
         }

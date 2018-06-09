@@ -56,6 +56,34 @@ public class GameOfLifeTest {
         assertFalse(flag);
     }
 
+    @Test
+    public void shouldLessTwoDead() {
+        // Given
+        int cellCount = 2;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, SIZE);
+
+        // When
+        String[][] matrixNew = gameOfLife.updateMatrix();
+        int cellCountNew = checkCellCount(matrixNew);
+
+        // Then
+        assertTrue(cellCountNew == 0);
+    }
+
+    @Test
+    public void shouldEqualsTwoKeep() {
+        // Given
+        int cellCount = 2;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, 2);
+
+        // When
+        String[][] matrixNew = gameOfLife.updateMatrix();
+        int cellCountNew = checkCellCount(matrixNew);
+
+        // Then
+        assertTrue(cellCountNew == 0);
+    }
+
     private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
