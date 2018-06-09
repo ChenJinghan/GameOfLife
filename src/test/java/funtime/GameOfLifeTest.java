@@ -2,13 +2,17 @@ package funtime;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GameOfLifeTest {
+
+    static final int SIZE = 100;
+
     @Test
     public void shouldGetMatrix() {
         // Given
-        GameOfLife gameOfLife = new GameOfLife();
+        GameOfLife gameOfLife = new GameOfLife(SIZE);
 
         // When
         String[][] matrix = gameOfLife.getMatrix();
@@ -20,22 +24,50 @@ public class GameOfLifeTest {
     @Test
     public void shouldGetInitMatrix() {
         // Given
-        int size = 5;
-        GameOfLife gameOfLife = new GameOfLife(size);
+        int cellCount = 5;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, SIZE);
 
         // When
         String[][] matrix = gameOfLife.getMatrix();
+        int count_matrix = checkCellCount(matrix);
+
+        // Then
+        assertTrue(count_matrix == cellCount);
+    }
+
+    @Test
+    public void shouldGetRandomMatrix() {
+        // Given
+        int cellCount = 5;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, SIZE);
+        GameOfLife gameOfLife2 = new GameOfLife(cellCount, SIZE);
+
+        // When
+        boolean flag = true;
+        String[][] matrix = gameOfLife.getMatrix();
+        String[][] matrix_2 = gameOfLife2.getMatrix();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (!matrix[i][j].equals(matrix_2[i][j])) flag = false;
+            }
+        }
+
+        // Then
+        assertFalse(flag);
+    }
+
+    private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
+            for (int j = 0; j < matrix[0].length; j++) {
                 if (matrix[i][j].equals("*")) {
                     count++;
                 }
 
             }
         }
-
-        // Then
-        assertTrue(count == 5);
+        return count;
     }
+
+
 }
