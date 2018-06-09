@@ -98,6 +98,20 @@ public class GameOfLifeTest {
         assertTrue(cellCountNew == 4);
     }
 
+    @Test
+    public void shouldGreatThanThreeDead() {
+        // Given
+        int cellCount = 9;
+        GameOfLife gameOfLife = new GameOfLife(cellCount, 3);
+
+        // When
+        String[][] matrixNew = gameOfLife.updateMatrix();
+        int cellCountNew = checkCellCount(matrixNew);
+
+        // Then
+        assertTrue(cellCountNew == 4);
+    }
+
     private int checkCellCount(String[][] matrix) {
         int count = 0;
         for (int i = 0; i < matrix.length; i++) {
@@ -105,7 +119,6 @@ public class GameOfLifeTest {
                 if (matrix[i][j].equals("*")) {
                     count++;
                 }
-
             }
         }
         return count;

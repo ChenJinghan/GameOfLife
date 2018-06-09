@@ -39,6 +39,7 @@ public class GameOfLife {
         String[][] resultMatrix = new String[size][size];
         cleanMatrix(resultMatrix);
 
+
         for (int i = 0; i < matrixA.length; i++) {
             for (int j = 0; j < matrixA[0].length; j++) {
                 int aliveCellCount = getAroundAliveCount(i, j);
@@ -49,6 +50,8 @@ public class GameOfLife {
                     resultMatrix[i][j] = matrixA[i][j];
                 } else if (aliveCellCount == 3) {
                     resultMatrix[i][j] = "*";
+                }else{
+                    resultMatrix[i][j] = " ";
                 }
             }
         }
